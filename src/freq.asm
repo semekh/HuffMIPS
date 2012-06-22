@@ -1,3 +1,4 @@
+# Auhtor: Kasnavi
 .globl freq
 .text
 freq:
