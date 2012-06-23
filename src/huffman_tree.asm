@@ -8,7 +8,7 @@
 .data
 	arr_lft: .space 4 #stores address of left children array
 	arr_rgt: .space 4 #stores address of right children array
-	arr_par: .space 4 #stores address of right children array
+	arr_par: .space 4 #stores address of parent array
 	n: .space 4 
 .text
 
