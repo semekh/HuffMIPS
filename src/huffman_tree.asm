@@ -16,6 +16,12 @@
 tests:
 	li $a0, 10
 	jal huff3_init
+	li $a0, 3
+	li $a1, 5
+	jal huff3_merge
+	li $a0, 10
+	li $a1, 2
+	jal huff3_merge
 	#exit
 	li $v0, 10
 	syscall
@@ -77,15 +83,15 @@ huff3_merge:
 	sll $t3, $a1, 2 #t3=right*4
 	
 	#updating parents of left and right
-	la $t4, arr_par
+	lw $t4, arr_par
 	add $t5, $t4, $t2
 	sw $t0, 0($t5)
 	add $t5, $t4, $t3
 	sw $t0, 0($t5)
 	
 	#updating left and right of parent
-	la $t4, arr_lft
-	la $t5, arr_rgt
+	lw $t4, arr_lft
+	lw $t5, arr_rgt
 	add $t4, $t4, $t1
 	add $t5, $t5, $t1
 	sw $a0, 0($t4)
@@ -98,7 +104,7 @@ huff3_merge:
 	addi $t0, $t0, 1
 	sw $t0, n
 	
-	jal $ra
+	jr $ra
 	
 #gets address of a symbol (a word between 1 and n) and returns its encoded bits
 huff3_encode:
