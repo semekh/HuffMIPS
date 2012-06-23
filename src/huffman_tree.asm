@@ -1,14 +1,20 @@
 #Author: Sekhavat
 
+#global procedures:
 .globl huff3_init
 .globl huff3_merge
 .globl huff3_encode
 .globl huff3_decode
 
+#global .data labels:
+.globl huff3_arr_lft #array with size 4*2*n bytes
+.globl huff3_arr_rgt #array with size 4*2*n bytes
+.globl huff3_arr_par #array with size 4*2*n bytes
+
 .data
-	arr_lft: .space 4 #stores address of left children array
-	arr_rgt: .space 4 #stores address of right children array
-	arr_par: .space 4 #stores address of parent array
+	huff3_arr_lft: .space 4 #stores address of left children array
+	huff3_arr_rgt: .space 4 #stores address of right children array
+	huff3_arr_par: .space 4 #stores address of parent array
 	n: .space 4 
 .text
 
@@ -41,22 +47,22 @@ huff3_init:
 	li $v0, 9
 	sll $a0, $s0, 3 #4*2n
 	syscall
-	sw $v0, arr_lft
+	sw $v0, huff3_arr_lft
 	
 	li $v0, 9
 	sll $a0, $s0, 3 #4*2n
 	syscall
-	sw $v0, arr_rgt
+	sw $v0, huff3_arr_rgt
 	
 	li $v0, 9
 	sll $a0, $s0, 3 #4*2n
 	syscall
-	sw $v0, arr_par
+	sw $v0, huff3_arr_par
 	
 	#filling arrays with -1 (null)
-	lw $t0, arr_lft
-	lw $t1, arr_rgt
-	lw $t2, arr_par
+	lw $t0, huff3_arr_lft
+	lw $t1, huff3_arr_rgt
+	lw $t2, huff3_arr_par
 	sll $t3, $s0, 3
 	add $t3, $t3, $t0
 	li $t4, -1
@@ -83,15 +89,15 @@ huff3_merge:
 	sll $t3, $a1, 2 #t3=right*4
 	
 	#updating parents of left and right
-	lw $t4, arr_par
+	lw $t4, huff3_arr_par
 	add $t5, $t4, $t2
 	sw $t0, 0($t5)
 	add $t5, $t4, $t3
 	sw $t0, 0($t5)
 	
 	#updating left and right of parent
-	lw $t4, arr_lft
-	lw $t5, arr_rgt
+	lw $t4, huff3_arr_lft
+	lw $t5, huff3_arr_rgt
 	add $t4, $t4, $t1
 	add $t5, $t5, $t1
 	sw $a0, 0($t4)
