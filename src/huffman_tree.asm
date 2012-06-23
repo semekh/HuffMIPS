@@ -71,8 +71,35 @@ huff3_init:
 
 # merges subtrees with roots left and right and returns number of new root
 huff3_merge:
-	jr $ra
-
+	lw $t0, n
+	sll $t1, $t0, 2 #t1=par*4
+	sll $t2, $a0, 2 #t2=left*4
+	sll $t3, $a1, 2 #t3=right*4
+	
+	#updating parents of left and right
+	la $t4, arr_par
+	add $t5, $t4, $t2
+	sw $t0, 0($t5)
+	add $t5, $t4, $t3
+	sw $t0, 0($t5)
+	
+	#updating left and right of parent
+	la $t4, arr_lft
+	la $t5, arr_rgt
+	add $t4, $t4, $t1
+	add $t5, $t5, $t1
+	sw $a0, 0($t4)
+	sw $a1, 0($t5)
+	
+	#return value
+	move $v0, $t0
+	
+	#updating n
+	addi $t0, $t0, 1
+	sw $t0, n
+	
+	jal $ra
+	
 #gets address of a symbol (a word between 1 and n) and returns its encoded bits
 huff3_encode:
 	jr $ra
