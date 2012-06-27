@@ -3,10 +3,6 @@ HuffMIPS
 
 Huffman Encoder/Decoder Implemented in MIPS Assembly
 
-TODO
-====
-Add instructions to compile & run
-
 How To Run
 ==========
 Download and install [MARS](http://courses.missouristate.edu/KenVollmar/MARS/)

@@ -1,5 +1,3 @@
-#Author: Sekhavat
-
 #global procedures:
 .globl huff3_init
 .globl huff3_merge

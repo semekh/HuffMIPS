@@ -1,4 +1,3 @@
-# Auhtor: Kasnavi
 #globl procedures
 .globl freq
 
