@@ -1,38 +1,4 @@
 .text
-.globl main
-main:
-	
-	li $a0, 6
-	jal heap_init
-	li $a0, 10
-	jal heap_insert
-	li $a0, 70
-	jal heap_insert
-	li $a0, 60
-	jal heap_insert
-	li $a0, 30
-	jal heap_insert
-	li $a0, 90
-	jal heap_insert
-	li $a0, 20
-	jal heap_insert
-
-	li $s3, 0
-	remove:
-		jal heap_extract_min
-		addi $a0, $v0, 0
-		li $v0, 1
-		syscall
-		addi $s3, $s3, 4
-		blt $s3, 24, remove
-
-
-	li $v0, 10
-	syscall
-
-	
-	jr $ra
-
 .globl heap_init
 heap_init:
 	li $v0, 9
