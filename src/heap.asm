@@ -1,49 +1,51 @@
 .text
 .globl main
 main:
-	li $a0, 3
-	jal heap_init
-	li $a0, 4
-	li $a1, 123
-	jal heap_insert
-	li $a0, 2
-	li $a1, 1234
-	jal heap_insert
-	li $a0, 1
-	li $a1, 234
-	jal heap_insert
-	jal heap_extractmin
-	move $a0, $v0
-	li $v0, 1
-	syscall
-	move $a0, $v1
-	li $v0, 1
-	syscall
 	
-	jal heap_extractmin
-	move $a0, $v0
-	li $v0, 1
+	li $a0, 6
+	jal heap_init
+	li $a0, 10
+	jal heap_insert
+	li $a0, 70
+	jal heap_insert
+	li $a0, 60
+	jal heap_insert
+	li $a0, 30
+	jal heap_insert
+	li $a0, 90
+	jal heap_insert
+	li $a0, 20
+	jal heap_insert
+
+	li $s3, 0
+	remove:
+		jal heap_extract_min
+		addi $a0, $v0, 0
+		li $v0, 1
+		syscall
+		addi $s3, $s3, 4
+		blt $s3, 24, remove
+
+
+	li $v0, 10
 	syscall
-	move $a0, $v1
-	li $v0, 1
-	syscall
-	li $ra, 0
+
+	
 	jr $ra
 
 .globl heap_init
 heap_init:
-	li $v0, 9	
+	li $v0, 9
 	sll $a0, $a0, 2
-	syscall		
-	sw $v0, Heap_BaseKey	
-	li $v0, 9	
 	syscall
-	sw $v0, Heap_BaseValue		
+	sw $v0, Heap_BaseKey
+	li $v0, 9
+	syscall
+	sw $v0, Heap_BaseValue	
 	jr $ra
 
 
 .globl heap_insert
-
 heap_insert:
 	addi $sp, $sp, -12
 	sw $s0, 0($sp)
@@ -69,8 +71,8 @@ heap_insert:
 	jr $ra
 	
 	
-.globl heap_extractmin
-heap_extractmin:
+.globl heap_extract_min
+heap_extract_min:
 	addi $sp, $sp, -20
 	sw $s0, 0($sp)
 	sw $s1, 4($sp)
@@ -180,7 +182,7 @@ Heap_Update:
 		lw $t3, 0($t3)
 		lw $t4, 0($t4)
 		ble $t3, $t4, Heap_UD_thirdIf
-		add $v1, $t1, $0
+		add $v1, $t2, $0
 	Heap_UD_thirdIf:
 		beq $v1, $a0, Heap_UD_End
 		sll $t1, $a0, 2
@@ -189,8 +191,8 @@ Heap_Update:
 		add $t2, $s0, $t2
 		lw $t3, 0($t1)
 		lw $t4, 0($t2)
-		sw $t4, 0($t2)
-		sw $t3, 0($t1)
+		sw $t4, 0($t1)
+		sw $t3, 0($t2)
 		sll $t1, $a0, 2
 		add $t1, $s1, $t1
 		sll $t2, $v1, 2
@@ -206,9 +208,9 @@ Heap_Update:
 		addi $sp, $sp, 4
 		jr $ra
 .data
-Heap_BaseKey:	
+Heap_BaseKey:
 	.word 0
-Heap_BaseValue:		
+Heap_BaseValue:
 	.word 0
 Heap_CurrentSize:
 	.word 1	
