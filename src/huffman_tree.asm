@@ -1,8 +1,9 @@
+#Author: Sekhavat
+
 #global procedures:
 .globl huff3_init
 .globl huff3_merge
 .globl huff3_encode
-.globl huff3_decode
 
 #global .data labels:
 .globl huff3_arr_lft #array with size 4*2*n bytes
@@ -16,22 +17,34 @@
 	n: .space 4 
 .text
 
+.data
+	tmp: .word 1, 0, 2, 3
+.text
 #local testing
 tests:
-	li $a0, 10
+	li $a0, 4
 	jal huff3_init
-	li $a0, 3
-	li $a1, 5
+	li $a0, 1
+	li $a1, 3
 	jal huff3_merge
-	li $a0, 10
-	li $a1, 2
+	li $a0, 2
+	li $a1, 4
 	jal huff3_merge
+	li $a0, 5
+	li $a1, 0
+	jal huff3_merge
+	li $a0, 4
+	la $a1, tmp
+	jal huff3_encode
+	move $s0, $v0
+	move $s1, $v1
 	#exit
 	li $v0, 10
 	syscall
 
 
-# inits n nodes
+# inits n nodes 
+# inputs: n (in $a0)
 huff3_init:
 	#stack:
 	subi $sp, $sp, 8
@@ -80,6 +93,9 @@ huff3_init:
 
 
 # merges subtrees with roots left and right and returns number of new root
+# inputs: 	index of left child (in $a0)
+#		index of right child (in $a1)
+# output:	index of new node added to tree (in $v0)
 huff3_merge:
 	lw $t0, n
 	sll $t1, $t0, 2 #t1=par*4
@@ -109,12 +125,78 @@ huff3_merge:
 	sw $t0, n
 	
 	jr $ra
-	
+    	
+
 #gets address of a symbol (a word between 1 and n) and returns its encoded bits
+#inputs: 	count of symbols of array (in $a0)
+#		begin address of symbols array (in $a1)
+# outputs: 	begin address of encoded bits in reverse order (in $v0)
+#		count of bits of encoded text (in $v1)
 huff3_encode:
+	subi $sp, $sp, 12
+	sw $s0, 0($sp)
+	sw $s1, 4($sp)
+	sw $ra, 8($sp)
+
+	sll $a0, $a0, 2
+	move $t0, $a1	#t0 = iterator of symbols to be encoded
+	add $t1, $a0, $t0 #t1 = last iterator
+	
+	#swaping $t0, $t1 with $t1-4, $t0-4:
+	subi $t2, $t0, 4
+	subi $t0, $t1, 4
+	move $t1, $t2
+	
+	#allocate memory for ans array NOTE: a0 is already set
+	li $v0, 9
+	syscall	   	# now v0 is begin of ans array
+	li $v1, 0  	# v1 is count of bits of ans array
+	move $t2, $v0	# t2 is pointer to currently writing byte
+	li $t3, 1	# t3 is mask of currntly writing bit
+	li $t7, 0	# t7 is value of currently writing byte
+	
+	lw $s0, huff3_arr_par #s0=&par[0]
+	lw $s1, huff3_arr_lft #s1=&lft[1]
+
+    encode_L1:
+	lw $t4, 0($t0) #t4 = v
+    encode_L2:
+	sll $t5, $t4, 2
+	add $t5, $t5, $s0
+	lw $t5, 0($t5) #t5 = par(v)
+	beq $t5, -1, next_symbol
+	sll $t6, $t5, 2
+	add $t6, $t6, $s1
+	lw $t6, 0($t6) 		#t6 = left(par(v))
+	beq $t6, $t4, dont_add_mask
+	add $t7, $t7, $t3
+    dont_add_mask:
+    	sll $t3, $t3, 1
+    	addi $v1, $v1, 1
+    	bne $t3, 256, dont_go_next_byte
+    	sb $t7, 0($t2)	#writing flag to memory
+    	addi $t2, $t2, 1
+    	li $t7, 0
+    	li $t3, 1
+    dont_go_next_byte:   	
+	move $t4, $t5
+	j encode_L2
+	
+    next_symbol:
+    	subi $t0, $t0, 4
+    	bne $t0, $t1, encode_L1
+        
+        #writing remaining byte
+        beq $t3, 1, dont_write_remain
+	sb $t7, 0($t2)
+    dont_write_remain:
+    
+    	
+    encode_end:	
+	lw $s0, 0($sp)
+	lw $s1, 4($sp)
+	lw $ra, 8($sp)
+	addi $sp, $sp, 12
 	jr $ra
 
-#gets address of starting bit of an encoded symbol and returns its number	
-huff3_decode:
-	jr $ra
 	
