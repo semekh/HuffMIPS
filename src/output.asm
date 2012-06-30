@@ -14,7 +14,7 @@ sw $s4, 16($sp)#s4: address of output array
 move $s2, $a0 #a0 is the address of array_input
 move $s3, $a1
 
-lw $s1, n
+lw $s1, huff3_n
 
 li $v0, 1
 move $a0, $s1
@@ -25,8 +25,8 @@ la $a0, endl
 syscall #print \n
 
 move $a0, $s1
-lw $a1, huff3_arr_valu_sort #TODO: in bayad emse arayei bashe ke simbolo sort shode toshand! esmesh yadam nsit!
-jal print_array
+#lw $a1, huff3_arr_valu_sort #TODO: in bayad emse arayei bashe ke simbolo sort shode toshand! esmesh yadam nsit!
+#jal print_array
 
 li $v0, 4
 la $a0, endl
@@ -37,7 +37,7 @@ addi $s1, $s1, -1 #2*n-1
 
 move $a0, $s1
 lw $a1, huff3_arr_lft
-jal print_array
+#jal print_array
 
 li $v0, 4
 la $a0, endl
@@ -45,7 +45,7 @@ syscall #print \n
 
 move $a0, $s1
 lw $a1, huff3_arr_rgt
-jal print_array
+#jal print_array
 
 li $v0, 4
 la $a0, endl
@@ -64,7 +64,7 @@ huff_tree_print_loop:
 sll $t1, $s1, 2
 add $t2, $t1, $s2
 lw $a0, 0($t2)
-jal binary_search #TODO esmesh alekiest!
+#jal binary_search #TODO esmesh alekiest!
 sll $t1, $s1, 2
 add $t2, $t1, $s4
 sw $v0, 0($t2)
@@ -73,7 +73,7 @@ bne $s1, $s3, huff_tree_print_loop
 
 move $a0, $s3 
 move $a1, $s4
-jal huff3_encode
+#jal huff3_encode
 
 #from here s2 is begin address of array
 move $s2, $v0
@@ -112,10 +112,3 @@ jr $ra
 .data
 endl: .asciiz "\n"
 
-n:
-huff3_arr_valu_sort:
-print_array:
-huff3_arr_lft:
-huff3_arr_rgt:
-binary_search:
-huff3_encode:

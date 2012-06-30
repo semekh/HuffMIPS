@@ -9,11 +9,13 @@
 .globl huff3_arr_lft #array with size 4*2*n bytes
 .globl huff3_arr_rgt #array with size 4*2*n bytes
 .globl huff3_arr_par #array with size 4*2*n bytes
+.globl huff3_n
 
 .data
 	huff3_arr_lft: .space 4 #stores address of left children array
 	huff3_arr_rgt: .space 4 #stores address of right children array
 	huff3_arr_par: .space 4 #stores address of parent array
+	huff3_n:	   .space 4 #stores number of leaves of tree
 	n: .space 4 
 .text
 
@@ -47,12 +49,13 @@ tests:
 # inputs: n (in $a0)
 huff3_init:
 	#stack:
-	subi $sp, $sp, 8
+	addi $sp, $sp, -8
 	sw $s0, 0($sp)
 	sw $ra, 4($sp)
 
 	move $s0, $a0
 	sw $s0, n
+	sw $s0, huff3_n
 	
 	#allocating memory
 	li $v0, 9
@@ -133,7 +136,7 @@ huff3_merge:
 # outputs: 	begin address of encoded bits in reverse order (in $v0)
 #		count of bits of encoded text (in $v1)
 huff3_encode:
-	subi $sp, $sp, 12
+	addi $sp, $sp, -12
 	sw $s0, 0($sp)
 	sw $s1, 4($sp)
 	sw $ra, 8($sp)
@@ -143,8 +146,8 @@ huff3_encode:
 	add $t1, $a0, $t0 #t1 = last iterator
 	
 	#swaping $t0, $t1 with $t1-4, $t0-4:
-	subi $t2, $t0, 4
-	subi $t0, $t1, 4
+	addi $t2, $t0, -4
+	addi $t0, $t1, -4
 	move $t1, $t2
 	
 	#allocate memory for ans array NOTE: a0 is already set
@@ -183,7 +186,7 @@ huff3_encode:
 	j encode_L2
 	
     next_symbol:
-    	subi $t0, $t0, 4
+    	addi $t0, $t0, -4
     	bne $t0, $t1, encode_L1
         
         #writing remaining byte
