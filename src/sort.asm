@@ -6,7 +6,7 @@ sort:
 	# $a1: pointer to array containing keys
 	# $a2: pointer to array containing values
 	
-	addi $sp, $sp, -16
+	addi $sp, $sp, -20
 	sw $ra,  0($sp)
 	sw $s0,  4($sp)
 	sw $s1,  8($sp)
@@ -44,6 +44,6 @@ sort:
 	lw $s1,  8($sp)
 	lw $s2, 12($sp)
 	lw $s3, 16($sp)
-	addi $sp, $sp, 16
+	addi $sp, $sp, 20
 	jr $ra
 
