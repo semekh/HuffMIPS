@@ -1,59 +1,64 @@
-#globl procedures
 .globl freq
+.globl inp_symb_cnt
+.globl inp_symb_ptr
+.globl inp_freq_ptr
 
-#globl .data lables
-.globl huff3_freg      #stores 4*2*n bytes - frequencies of input numbers
-
-.data
-	huff3_freg: .space 4 
 .text
 
 freq:
 	# Given an array of N words, find the frequency of each word
 	# $a0: number of words in the array (N)
 	# $a1: address of an array of words
-	# $v0: address of an array, $v0[i] = frequency($a1[i])
-
-	# $t0: end of a1 array, $t1: first pointer, $t2: second pointer, $t3: hold repeated numbers
-	# $t4: hold current value, $t5: hold next value, $t6: save place pointer
-
-	la $a1, L1
-	addi $a0, $0, 4
-	addi $a2, $0, 3
-	sw $a2, 0($a1)
-	addi $a2, $0, 4
-	sw $a2, 4($a1)
-	addi $a2, $0, 4
-	sw $a2, 8($a1)
-	addi $a2, $0, 5
-	sw $a2, 12($a1)
 	
-
+#	la $a1, Array
+#	li $a0, 9
+	
 	move $t0, $a0
-	sll $t0, $t0, 2
-	add $t0, $t0, $a1
 	move $t1, $a1
-	move $t2, $a1
-	la $v0, huff3_freg
-	move $t6, $v0
-
-Find_Frequency_number:
-	li $t3, 0 
-	beq $t1, $t0, Exit
-	lw $t4, 0($t1)
-Inc_Number:
-	addi $t3, $t3, 1
-	addi $t1, $t1, 4
-	beq $t1, $t0, Fix_Frequency
-	lw $t5, 0($t1)
-	beq $t4, $t5, Inc_Number
-Fix_Frequency:
-	sw $t3, 0($t6)
-	addi $t2, $t2, 4
-	addi $t6, $t6, 4
-	bne $t1, $t2, Fix_Frequency
-
-	bne $t2, $t0, Find_Frequency_number
-
-Exit:
+	
+	li $v0, 9
+	sll $a0, $t0, 2
+	syscall
+	move $t2, $v0
+	li $v0, 9
+	syscall
+	move $t3, $v0
+	
+	sw $t2, inp_symb_ptr
+	sw $t3, inp_freq_ptr
+	
+	li $t4, 0 # loop iterator
+	li $t5, -1 # different symbol count
+	li $t6, -1 # last symbol
+	li $t7, 0 # freq of last symbol
+	freq_loop:
+		sll $t8, $t4, 2
+		add $t8, $t8, $t1
+		lw $t9, ($t8)
+		beq $t6, $t9, freq_inc
+		
+		move $t6, $t9
+		addi $t5, $t5, 1
+		sll $t8, $t5, 2
+		add $t8, $t8, $t2
+		sw $t6, ($t8)
+		li $t7, 0
+		
+		freq_inc:
+		addi $t7, $t7, 1
+		sll $t8, $t5, 2
+		add $t8, $t8, $t3
+		sw $t7, ($t8)
+		
+		addi $t4, $t4, 1
+	bne $t4, $t0, freq_loop
+	
+	addi $t5, $t5, 1
+	sw $t5, inp_symb_cnt
 	jr $ra
+
+.data
+	inp_symb_cnt: .space 4
+	inp_symb_ptr: .space 4 
+	inp_freq_ptr: .space 4
+#	Array: .word 1, 1, 1, 2, 3, 4, 4, 5, 5
