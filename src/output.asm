@@ -25,8 +25,8 @@ huff_print_tree:
 	syscall #print \n
 
 	move $a0, $s1
-	#lw $a1, huff3_arr_valu_sort #TODO: in bayad emse arayei bashe ke simbolo sort shode toshand! esmesh yadam nsit!
-	#jal print_array
+	lw $a1, inp_symb_ptr #TODO: SAJAD: CHECK KON
+	jal print_array
 
 	li $v0, 4
 	la $a0, endl
@@ -37,7 +37,7 @@ huff_print_tree:
 
 	move $a0, $s1
 	lw $a1, huff3_arr_lft
-	#jal print_array
+	jal print_array
 
 	li $v0, 4
 	la $a0, endl
@@ -45,7 +45,7 @@ huff_print_tree:
 
 	move $a0, $s1
 	lw $a1, huff3_arr_rgt
-	#jal print_array
+	jal print_array
 
 	li $v0, 4
 	la $a0, endl
@@ -64,7 +64,7 @@ huff_print_tree:
 		sll $t1, $s1, 2
 		add $t2, $t1, $s2
 		lw $a0, 0($t2)
-		#jal binary_search #TODO esmesh alekiest!
+		jal bsearch #TODO SAJAD: CHECK KON
 		sll $t1, $s1, 2
 		add $t2, $t1, $s4
 		sw $v0, 0($t2)
@@ -73,7 +73,7 @@ huff_print_tree:
 
 	move $a0, $s3 
 	move $a1, $s4
-	#jal huff3_encode
+	jal huff3_encode
 
 	#from here s2 is begin address of array
 	move $s2, $v0
@@ -107,6 +107,10 @@ huff_print_tree:
 	lw $s4, 16($sp)
 	addi $sp, $sp, 20
 
+	jr $ra
+
+print_array:
+# TODO: SAJAD
 	jr $ra
 
 .data
