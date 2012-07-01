@@ -25,12 +25,8 @@ huff_print_tree:
 	syscall #print \n
 
 	move $a0, $s1
-	lw $a1, inp_symb_ptr #TODO: SAJAD: CHECK KON
+	lw $a1, inp_symb_ptr
 	jal print_array
-
-	li $v0, 4
-	la $a0, endl
-	syscall #print \n
 
 	sll $s1, $s1, 1 #2*n
 	addi $s1, $s1, -1 #2*n-1
@@ -39,17 +35,9 @@ huff_print_tree:
 	lw $a1, huff3_arr_lft
 	jal print_array
 
-	li $v0, 4
-	la $a0, endl
-	syscall #print \n
-
 	move $a0, $s1
 	lw $a1, huff3_arr_rgt
 	jal print_array
-
-	li $v0, 4
-	la $a0, endl
-	syscall #print \n
 
 	#allocate memory
 	li $v0, 9
@@ -64,7 +52,7 @@ huff_print_tree:
 		sll $t1, $s1, 2
 		add $t2, $t1, $s2
 		lw $a0, 0($t2)
-		jal bsearch #TODO SAJAD: CHECK KON
+		jal bsearch
 		sll $t1, $s1, 2
 		add $t2, $t1, $s4
 		sw $v0, 0($t2)
@@ -109,31 +97,27 @@ huff_print_tree:
 
 	jr $ra
 
-.globl print_array
 print_array:
-move $t0, $a0 #size of the array
-move $t1, $a1 #address of the array
-li $t3, 0
+	move $t0, $a0 #size of the array
+	move $t1, $a1 #address of the array
 
-huff_print_array_loop: beq $t3, $a0, huff_print_aray_exit
+	li $t3, 0	
+	huff_print_array_loop:
+		beq $t3, $t0, huff_print_aray_exit
+		sll $t4, $t3, 2
+		add $t4, $t4, $t1
+		li $v0, 1
+		lw $a0, 0($t4) # load the t3 elementof array to the a0
+		syscall
 
-add $t4, $t3, $t1
-li $v0, 1
-lw $a0, 0($t4) # load the t3 elementof array to the a0
-syscall
-
-li $v0, 4
-la $a0, space
-syscall #print space
-
-j huff_print_array_loop
-
-li $v0, 4
-la $a0, endl
-syscall #print \n
-
-huff_print_aray_exit:
-jr $ra
+		li $v0, 4
+		la $a0, endl
+		syscall
+		
+		addi $t3, $t3, 1
+	b huff_print_array_loop
+	huff_print_aray_exit:
+	jr $ra
 
 .data
 endl: .asciiz "\n"
