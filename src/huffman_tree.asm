@@ -16,6 +16,7 @@
 	huff3_arr_rgt: .space 4 #stores address of right children array
 	huff3_arr_par: .space 4 #stores address of parent array
 	huff3_n:	   .space 4 #stores number of leaves of tree
+	n:		.space 4 #stores number of vertices of tree
 .text
 
 .data
@@ -54,7 +55,7 @@ huff3_init:
 
 	move $s0, $a0
 	sw $s0, huff3_n
-	sw $s0, huff3_n
+	sw $s0, n
 	
 	#allocating memory
 	li $v0, 9
@@ -99,7 +100,7 @@ huff3_init:
 #		index of right child (in $a1)
 # output:	index of new node added to tree (in $v0)
 huff3_merge:
-	lw $t0, huff3_n
+	lw $t0, n
 	sll $t1, $t0, 2 #t1=par*4
 	sll $t2, $a0, 2 #t2=left*4
 	sll $t3, $a1, 2 #t3=right*4
@@ -124,7 +125,7 @@ huff3_merge:
 	
 	#updating n
 	addi $t0, $t0, 1
-	sw $t0, huff3_n
+	sw $t0, n
 	
 	jr $ra
     	
