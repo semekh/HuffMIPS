@@ -6,18 +6,20 @@
 
 encoder:
 	jal read_input
-	jal build
-#	jal output
+	jal build_tree
+	jal huff_print_tree
 	
 	li $v0, 10
 	syscall
 
-build:
+build_tree:
 
-	addi $sp, $sp, 12
-	sw $ra,  0($sp)
-	sw $s0,  4($sp)
-	sw $s1,  8($sp)
+	addi $sp, $sp, -20
+	sw $ra, 0($sp)
+	sw $s0, 4($sp)
+	sw $s1, 8($sp)
+	sw $s2, 12($sp)
+	sw $s3, 16($sp)
 	
 	lw $s0, enc_inp_len
 	lw $s1, enc_inp_ptr
@@ -30,7 +32,7 @@ build:
 	move $a0, $s0
 	move $a1, $s1
 	jal freq
-
+	
 	lw $s0, inp_symb_cnt
 	lw $s1, inp_freq_ptr
 		
@@ -57,7 +59,7 @@ build:
 		move $a0, $s3
 		move $a1, $v1
 				
-		#jal huff3_merge
+		jal huff3_merge
 		li $v0, 1
 		syscall
 		li $v0, 1
@@ -73,17 +75,12 @@ build:
 	bne $s1, $s0, enc_build_tree
 
 
-#	for i = 0 to n
-#		insert to heap
-#	for i = 0 to n
-#		ext i1, v1
-#		ext i2, v2
-#		merge bs(v1), bs(v2)
-	
-	lw $ra,  0($sp)
-	lw $s0,  4($sp)
-	lw $s1,  8($sp)
-	addi $sp, $sp, -12
+	lw $ra, 0($sp)
+	lw $s0, 4($sp)
+	lw $s1, 8($sp)
+	lw $s2, 12($sp)
+	lw $s3, 16($sp)
+	addi $sp, $sp, 20
 	jr $ra
 
 read_input:
@@ -92,7 +89,8 @@ read_input:
 	add $t0, $v0, $zero
 	sw $t0, enc_inp_len
 	
-	sll $a0, $t0, 2 #FIXME: should be added by 1 char
+	sll $a0, $t0, 2
+	addi $a0, $a0, 4
 	li $v0, 9
 	syscall
 	add $a0, $v0, $zero

@@ -1,5 +1,3 @@
-# Author: Jalali
-
 .globl decoder
 decoder:
 addi $sp, $sp, -36
