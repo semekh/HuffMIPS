@@ -7,6 +7,7 @@
 encoder:
 	jal read_input
 	jal build_tree
+	lw $a0, enc_inp_ptr
 	jal huff_print_tree
 	
 	li $v0, 10
@@ -49,6 +50,9 @@ build_tree:
 		addi $s2, $s2, 1
 	bne $s2, $s0, enc_insert
 
+	move $a0, $s0
+	jal huff3_init
+	
 	li $s1, 1 # loop iterator
 	enc_build_tree:
 		jal heap_extract_min
@@ -60,11 +64,6 @@ build_tree:
 		move $a1, $v1
 				
 		jal huff3_merge
-		li $v0, 1
-		syscall
-		li $v0, 1
-		move $a0, $a1
-		syscall
 		
 		move $a0, $s2
 		add $a1, $s0, $s1
@@ -74,7 +73,7 @@ build_tree:
 		addi $s1, $s1, 1
 	bne $s1, $s0, enc_build_tree
 
-
+hell:
 	lw $ra, 0($sp)
 	lw $s0, 4($sp)
 	lw $s1, 8($sp)
@@ -105,3 +104,4 @@ read_input:
 .data
 enc_inp_len: .space 4
 enc_inp_ptr: .space 4
+

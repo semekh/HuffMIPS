@@ -30,3 +30,4 @@ bsearch:
 	bs_found:
 	move $v0, $t2	
 	jr $ra
+

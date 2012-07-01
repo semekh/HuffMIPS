@@ -17,9 +17,7 @@
 	huff3_arr_par: .space 4 #stores address of parent array
 	huff3_n:	   .space 4 #stores number of leaves of tree
 	n:		.space 4 #stores number of vertices of tree
-.text
 
-.data
 	tmp: .word 1, 0, 2, 3
 .text
 #local testing

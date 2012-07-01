@@ -115,4 +115,5 @@ print_array:
 
 .data
 endl: .asciiz "\n"
+.align 4
 
