@@ -8,13 +8,13 @@ bsearch:
 	bs_loop:
 		add $t2, $t0, $t1
 		srl $t2, $t2, 1
-		beq $t0 $t2, bs_not_found
 		
 		sll $t9, $t2, 2
 		add $t9, $t9, $t8
 		lw $t9, 0($t9)
 		
 		beq $t9, $a0, bs_found
+		beq $t0 $t2, bs_not_found
 		blt $t9, $a0, bs_right
 
 		bs_left:
