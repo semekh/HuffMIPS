@@ -62,3 +62,4 @@ freq:
 	inp_symb_ptr: .space 4 
 	inp_freq_ptr: .space 4
 #	Array: .word 1, 1, 1, 2, 3, 4, 4, 5, 5
+
