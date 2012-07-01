@@ -5,56 +5,69 @@
 
 heap_init:
 	li $v0, 9
-	sll $a0, $a0, 4
+	sll $a0, $a0, 2
 	syscall
-	sw $v0, Heap_Base
+	sw $v0, Heap_BaseKey
+	li $v0, 9
+	syscall
+	sw $v0, Heap_BaseValue
 	jr $ra
 
 heap_insert:
-	addi $sp, $sp, -8
+	addi $sp, $sp, -12
 	sw $s0, 0($sp)
-	sw $ra, 4($sp)
-	lw $s0, Heap_Base
+	sw $s1, 4($sp)
+	lw $s0, Heap_BaseKey
+	lw $s1, Heap_BaseValue
 	lw $t0, Heap_CurrentSize
-	sll $t1, $t0, 3
+	sll $t1, $t0, 2
 	add $t1, $t1, $s0
 	sw $a0, 0($t1)
-	sw $a1, 4($t1)
+	sll $t1, $t0, 2
+	add $t1, $t1, $s1
+	sw $a1, 0($t1)
 	addi $t0, $t0, 1
 	sw $t0, Heap_CurrentSize
+	sw $ra, 8($sp)
 	addi $a0, $t0, -1
 	jal Heap_InsertUpdate
-	lw $ra, 4($sp)
+	lw $ra, 8($sp)
+	lw $s1, 4($sp)
 	lw $s0, 0($sp)
-	addi $sp, $sp, 8
+	addi $sp, $sp, 12
 	jr $ra
 	
 	
 heap_extract_min:
-	addi $sp, $sp, -16
+	addi $sp, $sp, -20
 	sw $s0, 0($sp)
-	lw $s0, Heap_Base
+	sw $s1, 4($sp)
+	lw $s0, Heap_BaseKey
+	lw $s1, Heap_BaseValue
 	lw $t0, Heap_CurrentSize
 	addi $t0, $t0, -1
-	lw $v0, 8($s0)
-	lw $v1, 12($s0)
-	sll $t1, $t0, 3
+	lw $v0, 4($s0)
+	lw $v1, 4($s1)
+	sll $t1, $t0, 2
 	add $t1, $t1, $s0
-	lw $t2, 0($t1)
-	sw $t2, 8($s0)
-	lw $t2, 4($t1)
-	sw $t2, 12($s0)
+	lw $t1, 0($t1)
+	sw $t1, 4($s0)
+	sll $t1, $t0, 2
+	add $t1, $t1, $s1
+	lw $t1, 0($t1)
+	sw $t1, 4($s1)
 	sw $t0, Heap_CurrentSize
-	sw $ra, 4($sp)
-	sw $v0, 8($sp)
-	sw $v1, 12($sp)
+	sw $ra, 8($sp)
+	sw $v0, 12($sp)
+	sw $v1, 16($sp)
 	li $a0, 1
 	jal Heap_Update
-	lw $v1, 12($sp)
-	lw $v0, 8($sp)
-	lw $ra, 4($sp)
+	lw $v1, 16($sp)
+	lw $v0, 12($sp)
+	lw $ra, 8($sp)
+	lw $s1, 4($sp)
 	lw $s0, 0($sp)
-	addi $sp, $sp, 16
+	addi $sp, $sp, 20
 	jr $ra
 
 Heap_Parrent:
@@ -71,33 +84,38 @@ Heap_RightChild:
 	jr $ra
 
 Heap_InsertUpdate:
-	sll $t0, $a0, 3
+	add $t0, $a0, $0
 	addi $sp, $sp, -4
 	sw $ra, 0($sp)
-	blt $t0, 32, Heap_IUD_End
+	blt $t0, 2, Heap_IUD_End
 	Heap_IUD_Loop:
-		add $t1, $s0, $t0
-		srl $a0, $t0, 3		
+		sll $t1, $t0, 2
+		add $t1, $s0, $t1
+		add $a0, $t0, $0		
 		jal Heap_Parrent
-		sll $v0, $v0, 3
+		sll $v0, $v0, 2
 		add $t2, $s0, $v0
 		lw $t3, 0($t1)
 		lw $t4, 0($t2)
 		ble $t4, $t3, Heap_IUD_End
 		sw $t4, 0($t1)
 		sw $t3, 0($t2)
-		lw $t3, 4($t1)
-		lw $t4, 4($t2)
-		sw $t4, 4($t1)
-		sw $t3, 4($t2)
+		sll $t1, $t0, 2
+		add $t1, $s1, $t1
+		add $t2, $s1, $v0
+		lw $t3, 0($t1)
+		lw $t4, 0($t2)
+		sw $t4, 0($t1)
+		sw $t3, 0($t2)
+		srl $v0, $v0, 2
 		add $t0, $v0, $0
-		bgt $t0, 4, Heap_IUD_Loop
+		bgt $t0, 1, Heap_IUD_Loop
 	Heap_IUD_End:
 	lw $ra, 0($sp)
 	addi $sp, $sp, 4
 	jr $ra
 	
-	
+
 Heap_Update:
 	add $v1, $a0, $0
 	addi $sp, $sp, -4
@@ -107,8 +125,8 @@ Heap_Update:
 	jal Heap_RightChild
 	add $t2, $v0, $0
 	ble $t0, $t1, Heap_UD_secondIf
-	sll $t3, $a0, 3
-	sll $t4, $t1, 3
+	sll $t3, $a0, 2
+	sll $t4, $t1, 2
 	add $t3, $s0, $t3
 	add $t4, $s0, $t4
 	lw $t3, 0($t3)
@@ -118,8 +136,8 @@ Heap_Update:
 		add $v1, $t1, $0
 	Heap_UD_secondIf:
 		ble $t0, $t2, Heap_UD_thirdIf
-		sll $t3, $v1, 3
-		sll $t4, $t2, 3
+		sll $t3, $v1, 2
+		sll $t4, $t2, 2
 		add $t3, $s0, $t3
 		add $t4, $s0, $t4
 		lw $t3, 0($t3)
@@ -128,18 +146,22 @@ Heap_Update:
 		add $v1, $t2, $0
 	Heap_UD_thirdIf:
 		beq $v1, $a0, Heap_UD_End
-		sll $t1, $a0, 3
+		sll $t1, $a0, 2
 		add $t1, $s0, $t1
-		sll $t2, $v1, 3
+		sll $t2, $v1, 2
 		add $t2, $s0, $t2
 		lw $t3, 0($t1)
 		lw $t4, 0($t2)
 		sw $t4, 0($t1)
 		sw $t3, 0($t2)
-		lw $t3, 4($t1)
-		lw $t4, 4($t2)
-		sw $t4, 4($t1)
-		sw $t3, 4($t2)
+		sll $t1, $a0, 2
+		add $t1, $s1, $t1
+		sll $t2, $v1, 2
+		add $t2, $s1, $t2
+		lw $t3, 0($t1)
+		lw $t4, 0($t2)
+		sw $t4, 0($t1)
+		sw $t3, 0($t2)
 		add $a0, $v1, $0
 		jal Heap_Update
 	Heap_UD_End:
@@ -147,7 +169,10 @@ Heap_Update:
 		addi $sp, $sp, 4
 		jr $ra
 .data
-Heap_Base:
+Heap_BaseKey:
+	.word 0
+Heap_BaseValue:
 	.word 0
 Heap_CurrentSize:
 	.word 1	
+	
