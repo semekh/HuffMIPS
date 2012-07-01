@@ -109,11 +109,34 @@ huff_print_tree:
 
 	jr $ra
 
+.globl print_array
 print_array:
-# TODO: SAJAD
-	jr $ra
+move $t0, $a0 #size of the array
+move $t1, $a1 #address of the array
+li $t3, 0
+
+huff_print_array_loop: beq $t3, $a0, huff_print_aray_exit
+
+add $t4, $t3, $t1
+li $v0, 1
+lw $a0, 0($t4) # load the t3 elementof array to the a0
+syscall
+
+li $v0, 4
+la $a0, space
+syscall #print space
+
+j huff_print_array_loop
+
+li $v0, 4
+la $a0, endl
+syscall #print \n
+
+huff_print_aray_exit:
+jr $ra
 
 .data
 endl: .asciiz "\n"
+space: .asciiz " "
 .align 4
 

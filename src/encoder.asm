@@ -8,6 +8,7 @@ encoder:
 	jal read_input
 	jal build_tree
 	lw $a0, enc_inp_ptr
+	lw $a1, enc_inp_len
 	jal huff_print_tree
 	
 	li $v0, 10
