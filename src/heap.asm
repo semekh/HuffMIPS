@@ -8,6 +8,8 @@ heap_init:
 	sll $a0, $a0, 4
 	syscall
 	sw $v0, Heap_Base
+	li $v0, 1
+   	sw $v0, Heap_CurrentSize
 	jr $ra
 
 heap_insert:
@@ -75,7 +77,7 @@ Heap_InsertUpdate:
 	sll $t0, $a0, 3
 	addi $sp, $sp, -4
 	sw $ra, 0($sp)
-	blt $t0, 8, Heap_IUD_End
+	ble $t0, 8, Heap_IUD_End
 	Heap_IUD_Loop:
 		add $t1, $s0, $t0
 		srl $a0, $t0, 3		
@@ -92,7 +94,7 @@ Heap_InsertUpdate:
 		sw $t4, 4($t1)
 		sw $t3, 4($t2)
 		add $t0, $v0, $0
-		bgt $t0, 4, Heap_IUD_Loop
+		bgt $t0, 8, Heap_IUD_Loop
 	Heap_IUD_End:
 	lw $ra, 0($sp)
 	addi $sp, $sp, 4
