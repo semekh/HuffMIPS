@@ -1,13 +1,14 @@
 .globl encoder
 .globl enc_inp_len
 .globl enc_inp_ptr
+.globl enc_inp_ptr2
 
 .text
 
 encoder:
 	jal read_input
 	jal build_tree
-	lw $a0, enc_inp_ptr
+	lw $a0, enc_inp_ptr2
 	lw $a1, enc_inp_len
 	jal huff_print_tree
 	
@@ -89,6 +90,14 @@ read_input:
 	add $t0, $v0, $zero
 	sw $t0, enc_inp_len
 	
+	##
+	sll $a0, $t0, 2
+	addi $a0, $a0, 4
+	li $v0, 9
+	syscall 
+	sw $v0, enc_inp_ptr2
+	##
+	
 	sll $a0, $t0, 2
 	addi $a0, $a0, 4
 	li $v0, 9
@@ -100,9 +109,23 @@ read_input:
 	addi $a1, $a1, 1
 	syscall
 	
+	##
+	lw $t1, enc_inp_ptr2
+	lw $t3, enc_inp_ptr
+	sll $t2, $t0, 2
+	addi $t2, $t2, 4
+	add $t2, $t2, $t1
+    pkh_loop:
+    	lw $t4, 0($t3)
+    	sw $t4, 0($t1)
+    	addi $t3, $t3, 4
+    	addi $t1, $t1, 4
+    	bne $t1, $t2, pkh_loop
+	##
+	
 	jr $ra
 
 .data
 enc_inp_len: .space 4
 enc_inp_ptr: .space 4
-
+enc_inp_ptr2: .space 4
