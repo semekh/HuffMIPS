@@ -5,7 +5,7 @@
 
 heap_init:
 	li $v0, 9
-	sll $a0, $a0, 3
+	sll $a0, $a0, 4
 	syscall
 	sw $v0, Heap_Base
 	li $v0, 1
