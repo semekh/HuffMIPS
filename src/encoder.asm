@@ -33,12 +33,13 @@ bsearch:
 	jr $ra
 
 .globl encoder
+.globl main
 .globl enc_inp_len
 .globl enc_inp_ptr
 .globl enc_inp_ptr2
 
 .text
-
+main:
 encoder:
 	jal read_input
 	jal build_tree
@@ -586,14 +587,6 @@ huff3_encode:
 	jr $ra
 
 	
-.globl main
-
-.text
-main:
-	jal encoder
-	li $v0, 10
-	syscall
-
 #first write the Huffman tree in the output
 #then write the encrypted text in the output
 

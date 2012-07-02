@@ -1,10 +1,11 @@
 .globl encoder
+.globl main
 .globl enc_inp_len
 .globl enc_inp_ptr
 .globl enc_inp_ptr2
 
 .text
-
+main:
 encoder:
 	jal read_input
 	jal build_tree
