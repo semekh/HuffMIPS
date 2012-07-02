@@ -122,6 +122,7 @@ sllv $t2, $t3, $t1
 j decoder_either
 decoder_eight_bit:
 li $t1, 7
+li $t3, 1
 sllv $t2, $t3, $t1
 decoder_either:
 lb $t4, 0($s5) #temp byte

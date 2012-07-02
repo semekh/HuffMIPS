@@ -5,9 +5,7 @@ Huffman Encoder/Decoder Implemented in MIPS Assembly
 
 How To Run
 ==========
-Download and install [MARS](http://courses.missouristate.edu/KenVollmar/MARS/)
-In MARS:
-  * In Settings Menu:
-    * Tick "Assemble all files in directory"
-    * Tick "Initialize Program Counter to global 'main' if defined"
-  * Assemble & Run
+You may execute the assembly files using MARS or SPIM (both of which are MIPS simulators)
+To toggle between the two simulators, just change the file "run.bash"
+You may run the tests using "test_all.bash"
+
