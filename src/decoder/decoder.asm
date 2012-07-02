@@ -1,4 +1,7 @@
 .globl decoder
+.globl main
+
+main:
 decoder:
 addi $sp, $sp, -36
 sw $s0, 0($sp)
@@ -181,3 +184,10 @@ lw $s6, 24($sp)
 lw $s7, 28($sp)
 lw $ra, 32($sp)
 addi $sp, $sp, 36
+
+li $v0, 11
+li $a0, 10
+syscall
+
+li $v0, 10
+syscall

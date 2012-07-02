@@ -75,7 +75,6 @@ build_tree:
 		addi $s1, $s1, 1
 	bne $s1, $s0, enc_build_tree
 
-hell:
 	lw $ra, 0($sp)
 	lw $s0, 4($sp)
 	lw $s1, 8($sp)
